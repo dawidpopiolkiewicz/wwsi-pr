@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PR.Notifications.Model;
+using PR.Notifications.Services;
 
 namespace PR.Patients.Controllers
 {
@@ -13,10 +12,12 @@ namespace PR.Patients.Controllers
     {
 
         private readonly Model.PrDataContext _context;
+        private readonly ServiceBusConsumer _sender;
 
-        public PatientsController(Model.PrDataContext context)
+        public PatientsController(Model.PrDataContext context, ServiceBusConsumer sender)
         {
             _context = context;
+            _sender = sender;
         }
 
         public IActionResult GetAll()
@@ -25,12 +26,20 @@ namespace PR.Patients.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(Model.Patients p)
+        public async Task<IActionResult> RegisterAsync(Model.Patients p)
         {
             _context.Patients.Add(p);
             _context.SaveChanges();
 
-            return Created("Created",p);
+
+            await _sender.SendMessage(new MessagePayload()
+            {
+                EventName = "NewPatientRegistered",
+                EmailAddress = p.Email,
+                Title = "COVID-19",
+                Message = "Informacja o kwarantannie."
+            });
+            return Created("Created", p);
         }
 
     }

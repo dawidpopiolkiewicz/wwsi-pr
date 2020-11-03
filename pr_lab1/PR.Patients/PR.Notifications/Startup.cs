@@ -1,12 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using PR.Notifications.Services;
 
-namespace PR.Patients
+namespace Notifications
 {
     public class Startup
     {
@@ -22,14 +28,7 @@ namespace PR.Patients
         {
             services.AddControllers();
 
-            services.AddScoped<ServiceBusConsumer>();
-
-            services.AddDbContext<Model.PrDataContext>(options =>
-         {
-             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-         });
-
-
+            services.AddSingleton<ServiceBusConsumer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +49,9 @@ namespace PR.Patients
             {
                 endpoints.MapControllers();
             });
+
+            var bus = app.ApplicationServices.GetService<ServiceBusConsumer>();
+            bus.Register();
         }
     }
 }

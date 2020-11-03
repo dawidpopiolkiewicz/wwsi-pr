@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UserSecretsId>f6c9b052-2e31-4d9b-aaaa-437456a1a0d8</UserSecretsId>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.0.0" />
+	</ItemGroup>
+
+</Project>
