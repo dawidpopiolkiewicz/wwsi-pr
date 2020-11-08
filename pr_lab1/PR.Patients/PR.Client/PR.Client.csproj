@@ -6,6 +6,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="IdentityModel.AspNetCore" Version="2.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\PR.Patients\PR.Patients.csproj" />
 	</ItemGroup>
 

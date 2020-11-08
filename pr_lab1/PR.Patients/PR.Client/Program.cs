@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
+using IdentityModel.Client;
 
 namespace PR.Client
 {
     class Program
     {
-
         static async System.Threading.Tasks.Task Main(string[] args)
         {
             HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(await GetToken());
             int option;
             do
             {
@@ -84,5 +87,40 @@ namespace PR.Client
             } while (option != 9);
 
         }
+
+
+        private static async Task<string> GetToken()
+        {
+            using var client = new HttpClient();
+
+            DiscoveryDocumentResponse disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest()
+            {
+                Address = "https://login.microsoftonline.com/146ab906-a33d-47df-ae47-fb16c039ef96/v2.0/",
+                Policy =
+                {
+                    ValidateEndpoints = false
+                }
+            });
+
+            if (disco.IsError)
+                throw new InvalidOperationException($"No discovery document. Details: {disco.Error}");
+
+            var tokenRequest = new ClientCredentialsTokenRequest
+            {
+                Address = disco.TokenEndpoint,
+                ClientId = "67dd9cfb-4344-4cc8-a2ca-573f6bb4422f",
+                ClientSecret = "tlVkd6QAX-kcl.XP_4Yslh00-2kPS6G_9_",
+                Scope = "api://67dd9cfb-4344-4cc8-a2ca-573f6bb4422f/.default"
+            };
+
+            var token = await client.RequestClientCredentialsTokenAsync(tokenRequest);
+
+            if (token.IsError)
+                throw new InvalidOperationException($"Couldn't gather token. Details: {token.Error}");
+
+            return $"{token.TokenType} {token.AccessToken}";
+        }
+
     }
+
 }

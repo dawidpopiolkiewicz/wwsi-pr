@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PR.Notifications.Model;
 using PR.Notifications.Services;
@@ -8,6 +9,7 @@ namespace PR.Patients.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PatientsController : ControllerBase
     {
 
@@ -20,6 +22,8 @@ namespace PR.Patients.Controllers
             _sender = sender;
         }
 
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             return Ok(_context.Patients.ToList());
@@ -39,7 +43,7 @@ namespace PR.Patients.Controllers
                 Title = "COVID-19",
                 Message = "Informacja o kwarantannie."
             });
-            return Created("Created", p);
+            return Created(uri: "Created", p);
         }
 
     }
