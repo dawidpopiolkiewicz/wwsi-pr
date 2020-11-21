@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -21,7 +22,8 @@ namespace PR.Client
 
                 Console.WriteLine("\n*** System COVID-19 ***");
                 Console.WriteLine("\n1. Dodaj pacjenta");
-                Console.WriteLine("2. Lista pacjentów");
+                Console.WriteLine("2. Lista pacjentów\n");
+                Console.WriteLine("3. Kontrolowane wywołanie błędu\n");
                 Console.WriteLine("\n9. Wyjście");
 
                 option = Int32.Parse(Console.ReadLine());
@@ -74,6 +76,10 @@ namespace PR.Client
                             Console.WriteLine("\nNr: " + number + "\nImię: " + p.FirstName + ",\nNazwisko: " + p.LastName + ",\nWiek: " + p.Age + ",\nData testu: " + p.TestDate + ",\nEmail: " + p.Email);
                         }
 
+                        break;
+
+                    case 3:
+                        await client.GetAsync("https://localhost:5001/api/patients/error");
                         break;
                     case 9:
                         Console.WriteLine("wybrano 9 - koniec programu");

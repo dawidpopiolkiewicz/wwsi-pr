@@ -13,6 +13,9 @@ namespace PR.Patients.Services
 
         public void Send(MessagePayload payload)
         {
+
+            throw new InvalidOperationException("Symulowany błąd podczas wysyłki wiadomości email.");
+
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,

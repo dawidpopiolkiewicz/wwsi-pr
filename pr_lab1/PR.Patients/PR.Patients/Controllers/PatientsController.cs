@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,8 @@ namespace PR.Patients.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class PatientsController : ControllerBase
+    public class PatientsController 
+        : ControllerBase
     {
 
         private readonly Model.PrDataContext _context;
@@ -20,6 +22,13 @@ namespace PR.Patients.Controllers
         {
             _context = context;
             _sender = sender;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("error")]
+        public IActionResult InvalidAction()
+        {
+            throw new InvalidOperationException("Symulowany problem z aplikacją, po wykonaniu akcji przez użytkownika");
         }
 
         [HttpGet]
@@ -43,7 +52,7 @@ namespace PR.Patients.Controllers
                 Title = "COVID-19",
                 Message = "Informacja o kwarantannie."
             });
-            return Created(uri: "Created", p);
+            return Created("Created", p);
         }
 
     }
